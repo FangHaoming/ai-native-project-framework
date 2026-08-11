@@ -1,0 +1,28 @@
+{
+  "name": "ai-native-project-framework",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A practical AI-native project framework with spec-driven delivery, controlled tools, observability, and governance.",
+  "type": "module",
+  "scripts": {
+    "check": "node tools/project.mjs check",
+    "spec:new": "node tools/project.mjs spec new",
+    "spec:list": "node tools/project.mjs spec list",
+    "ops:logs": "node tools/project.mjs ops logs",
+    "dev:status": "node tools/project.mjs dev status",
+    "test:affected": "node tools/project.mjs test affected",
+    "preview:create": "node tools/project.mjs preview create",
+    "deliver": "node tools/project.mjs deliver"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "ai-native",
+    "spec-driven",
+    "agentic-coding",
+    "observability",
+    "golden-path"
+  ],
+  "license": "UNLICENSED"
+}

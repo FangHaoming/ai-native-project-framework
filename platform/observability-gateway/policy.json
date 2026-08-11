@@ -1,0 +1,32 @@
+{
+  "environments": {
+    "local": {
+      "readLogs": true,
+      "runbooks": "allow"
+    },
+    "preview": {
+      "readLogs": true,
+      "runbooks": "self-owned"
+    },
+    "staging": {
+      "readLogs": true,
+      "runbooks": "approved"
+    },
+    "production": {
+      "readLogs": true,
+      "runbooks": "human-approval-required",
+      "writeOperations": false
+    }
+  },
+  "limits": {
+    "maxWindowHours": 24,
+    "maxRows": 500
+  },
+  "redaction": {
+    "emails": true,
+    "phones": true,
+    "tokens": true,
+    "cookies": true,
+    "authorizationHeaders": true
+  }
+}
