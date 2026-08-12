@@ -1,10 +1,13 @@
-# SDD Spec: {{title}}
+# Project SDD Spec Template
+
+```markdown
+# SDD Spec: <Task Name>
 
 - **Delivery Status**: draft
 - **RIPER Phase**: Research
 - **Approval Status**: Pending
-- **Owner**: {{owner}}
-- **Created**: {{date}}
+- **Owner**: <resolved from Git `user.name` by `project spec new`>
+- **Created**: YYYY-MM-DD
 
 ## 0. Open Questions
 
@@ -36,7 +39,7 @@
 ## 1.5 Codemap Used (Feature/Project Index)
 
 - Codemap Mode: feature / project
-- Codemap File: None
+- Codemap File: TBD
 - Key Index:
   - Entry Points / Architecture Layers: TBD
   - Core Logic / Cross-Module Flows: TBD
@@ -44,7 +47,7 @@
 
 ## 1.6 Context Bundle Snapshot (Lite/Standard)
 
-- Bundle Level: Lite
+- Bundle Level: Lite / Standard
 - Bundle File: None
 - Key Facts: TBD
 - Open Questions: None
@@ -60,7 +63,7 @@
 
 ## 3. Innovate (Optional: Options & Decision)
 
-- **Skipped**: TBD
+- **Skipped**: true / false
 - **Reason**: TBD
 - **Selected Strategy**: TBD
 
@@ -68,19 +71,19 @@
 
 ### 4.1 File Changes
 
-- TBD
+- `path`: change responsibility
 
 ### 4.2 Signatures
 
-- TBD
+- `signature or data contract`: intended behavior
 
 ### 4.3 Implementation Checklist
 
-- [ ] TBD
+- [ ] 1. Atomic step
 
 ### 4.4 Spec Review Notes (Optional Advisory)
 
-- **Readiness Verdict**: Not Reviewed
+- **Readiness Verdict**: Not Reviewed / GO / NO-GO
 - **Risks & Suggestions**: TBD
 - **Phase Reminders**: TBD
 - **User Decision**: Pending
@@ -117,12 +120,22 @@
 
 ## 8. Change Log & Handoff
 
-- {{date}}: Spec created in Research phase.
-- **Current State**: Research, locked for code execution.
-- **Next Action**: Complete Research and Plan, then wait for exact approval phrase `Plan Approved`.
+- YYYY-MM-DD: Spec created in Research phase.
+- **Current State**: Research; implementation locked.
+- **Next Action**: Complete Research and Plan, then wait for exact `Plan Approved`.
 - **Recovery / Rollback Notes**: No implementation changes yet.
 
 ## 9. Archive Record (Optional at Closure)
 
 - **Skipped**: pending closure
 - **Reason**: active Spec
+```
+
+## Phase completion
+
+- Research: requirements, context, findings, risks, and next action are factual and persisted.
+- Plan: file changes, signatures, and checklist are executable and approved.
+- Execute: implementation matches Plan and Execute Log is complete.
+- Review: all three axes have evidence and Overall Verdict is recorded.
+
+Future-phase placeholders do not block Research or Plan. They must be completed or explicitly skipped before `done`.

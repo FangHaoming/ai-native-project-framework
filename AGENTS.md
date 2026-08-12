@@ -4,6 +4,16 @@
 
 Deliver changes through a controlled loop: spec, plan, implement, verify, evidence, review.
 
+## Spec Protocol
+
+- Project Specs follow the project-local Skill at `.cursor/skills/sdd-riper-one/SKILL.md` as the workflow reference.
+- `Spec is Truth`: chat decisions and discovered implementation facts must be reverse-synced to the active Spec.
+- RIPER phases are explicit: `Research -> (Innovate) -> Plan -> Execute -> Review`.
+- `No Spec, No Code`: persist the relevant Spec before implementation.
+- `No Approval, No Execute`: only the exact phrase `Plan Approved`, recorded in the Spec, unlocks Execute.
+- Before phase changes, reload the relevant Spec sections from disk.
+- Review must cover requirement completion, Spec-code fidelity, and intrinsic code quality.
+
 ## Non-negotiable Rules
 
 - No code change without a spec in `specs/draft`, `specs/ready`, or `specs/done`.
