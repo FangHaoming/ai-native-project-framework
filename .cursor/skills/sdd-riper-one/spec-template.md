@@ -4,6 +4,7 @@
 # SDD Spec: <Task Name>
 
 - **Delivery Status**: draft
+- **Workflow Version**: 0
 - **RIPER Phase**: Research
 - **Approval Status**: Pending
 - **Owner**: <resolved from Git `user.name` by `project spec new`>

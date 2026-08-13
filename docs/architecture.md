@@ -31,6 +31,22 @@ Applications live under `apps/<name>` and may use Python, Java, Node.js, or anot
 
 Automatic stack discovery and cross-language command dispatch are not implemented yet. They belong to the Real Stack Binding phase and must be added as explicit control-plane capabilities rather than inferred from this layout.
 
+## Available Local Spec Workflow
+
+The implemented Spec workflow is a repository-local development tool:
+
+```text
+controlled CLI
+  -> Spec policy             # RIPER, approval, Review, handoff
+  -> workflow kernel         # legal state and optional expected-version decision
+  -> filesystem store        # exact resolution and non-overwriting Markdown switch
+  -> Git                     # branch, machine, and pull-request collaboration
+```
+
+Markdown under `specs/` keeps the complete workflow state and transition history. The local command does not maintain an event store, process lock, durable transaction, queue, or automatic recovery service. `--expected-version` detects an explicitly stale command but is not a concurrency guarantee; Git remains responsible for cross-branch and cross-machine reconciliation.
+
+Deployment and Runbook currently remain domain contracts and integration boundaries. `project deliver` is still a `hook`; there is no authenticated approval service, production executor, durable timer, queue, retry engine, or cross-machine worker. SQLite or an external workflow engine should only be introduced when multi-object transactions, indexed queues/leases, remote execution, durable waits, retries, or sagas become real requirements.
+
 ## Controlled Tools
 
 The capability registry in `tools/project.mjs` is the source of truth for command maturity. Query it with:

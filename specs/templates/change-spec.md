@@ -1,6 +1,7 @@
 # SDD Spec: {{title}}
 
 - **Delivery Status**: draft
+- **Workflow Version**: 0
 - **RIPER Phase**: Research
 - **Approval Status**: Pending
 - **Owner**: {{owner}}

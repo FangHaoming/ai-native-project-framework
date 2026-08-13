@@ -148,7 +148,7 @@ beforeEach(() => {
     mkdirSync(path.join(fixtureRoot, "specs", state), { recursive: true });
   }
   mkdirSync(path.join(fixtureRoot, "specs", "templates"), { recursive: true });
-  cpSync(path.join(repositoryRoot, "tools/project.mjs"), path.join(fixtureRoot, "tools/project.mjs"));
+  cpSync(path.join(repositoryRoot, "tools"), path.join(fixtureRoot, "tools"), { recursive: true });
   cpSync(
     path.join(repositoryRoot, "specs/templates/change-spec.md"),
     path.join(fixtureRoot, "specs/templates/change-spec.md")
@@ -200,6 +200,7 @@ describe("Spec creation", () => {
     const created = path.join(fixtureRoot, "specs", "draft", `${new Date().toISOString().slice(0, 10)}-portable-owner.md`);
     const content = readFileSync(created, "utf8");
     assert.match(content, /- \*\*Owner\*\*: Fixture Owner/);
+    assert.match(content, /- \*\*Workflow Version\*\*: 0/);
     assert.doesNotMatch(content, /Active Project|Active Workdir|Change Scope|\{\{owner\}\}/);
   });
 
@@ -234,8 +235,10 @@ describe("Spec state machine", () => {
     const target = path.join(fixtureRoot, "specs", "ready", filename);
     const content = readFileSync(target, "utf8");
     assert.match(content, /- \*\*Delivery Status\*\*: ready/);
+    assert.match(content, /- \*\*Workflow Version\*\*: 1/);
     assert.match(content, /## 10\. Transition History/);
     assert.match(content, /\| draft \| ready \| Test Reviewer \| Plan approved \|/);
+    assert.equal(existsSync(path.join(fixtureRoot, ".workflow")), false);
   });
 
   test("moves a reviewed ready Spec to done", () => {
@@ -345,5 +348,87 @@ describe("Spec state machine", () => {
 
     assert.equal(result.status, 1);
     assert.match(result.stderr, /Spec reference is ambiguous/);
+  });
+
+  test("rejects a stale expected version without persistent effects", () => {
+    const filename = "stale.md";
+    const source = writeSpec("draft", filename, approvedDraft());
+    const result = runProject(
+      "spec",
+      "transition",
+      filename,
+      "ready",
+      "--actor",
+      "Test Reviewer",
+      "--reason",
+      "Stale command",
+      "--expected-version",
+      "1"
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /expected 1, current 0/);
+    assert.equal(existsSync(source), true);
+    assert.equal(existsSync(path.join(fixtureRoot, ".workflow")), false);
+  });
+
+  test("never overwrites an existing target snapshot", () => {
+    const filename = "target-exists.md";
+    const source = writeSpec("draft", filename, approvedDraft());
+    const target = writeSpec("ready", filename, "existing target\n");
+
+    const result = runProject(
+      "spec",
+      "transition",
+      filename,
+      "ready",
+      "--actor",
+      "Test Reviewer",
+      "--reason",
+      "Do not overwrite"
+    );
+
+    assert.equal(result.status, 1);
+    assert.match(result.stderr, /Spec reference is ambiguous/);
+    assert.equal(existsSync(source), true);
+    assert.equal(readFileSync(target, "utf8"), "existing target\n");
+  });
+
+  test("keeps versions and Markdown history continuous across transitions", () => {
+    const filename = "continuous.md";
+    writeSpec("ready", filename, reviewedReady());
+    const toDraft = runProject(
+      "spec",
+      "transition",
+      filename,
+      "draft",
+      "--actor",
+      "Test Reviewer",
+      "--reason",
+      "Revise plan",
+      "--expected-version",
+      "0"
+    );
+    assert.equal(toDraft.status, 0, toDraft.stderr);
+
+    const toReady = runProject(
+      "spec",
+      "transition",
+      filename,
+      "ready",
+      "--actor",
+      "Test Reviewer",
+      "--reason",
+      "Approve revision",
+      "--expected-version",
+      "1"
+    );
+    assert.equal(toReady.status, 0, toReady.stderr);
+
+    const content = readFileSync(path.join(fixtureRoot, "specs", "ready", filename), "utf8");
+    assert.match(content, /Workflow Version\*\*: 2/);
+    assert.match(content, /\| ready \| draft \| Test Reviewer \| Revise plan \|/);
+    assert.match(content, /\| draft \| ready \| Test Reviewer \| Approve revision \|/);
+    assert.equal(existsSync(path.join(fixtureRoot, ".workflow")), false);
   });
 });

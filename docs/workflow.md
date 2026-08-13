@@ -22,14 +22,29 @@ A RIPER phase may advance while a legacy active Spec is still in `draft`; the re
 All directory moves use the controlled CLI:
 
 ```bash
-project spec transition <spec-filename> ready --actor <name> --reason <text>
-project spec transition <spec-filename> draft --actor <name> --reason <text>
-project spec transition <spec-filename> done --actor <name> --reason <text>
+project spec transition <spec-filename> ready --actor <name> --reason <text> [--expected-version <number>]
+project spec transition <spec-filename> draft --actor <name> --reason <text> [--expected-version <number>]
+project spec transition <spec-filename> done --actor <name> --reason <text> [--expected-version <number>]
 ```
 
-Legal transitions are `draft -> ready`, `ready -> draft`, and `ready -> done`; `done` is terminal. References are exact filenames. Every successful move updates `Delivery Status` and appends timestamp, actor, reason, source, and target to Transition History.
+Legal transitions are `draft -> ready`, `ready -> draft`, and `ready -> done`; `done` is terminal. References are exact filenames. Every successful move increments `Workflow Version`, updates `Delivery Status`, and appends Markdown Transition History. Markdown under `specs/` is the only workflow persistence, and Git carries it across branches and machines.
 
-Actor metadata is declarative local identity for audit context; it is not authenticated identity.
+`--expected-version` is optional for compatibility. When supplied, it rejects a command that was prepared from a different Markdown version before filesystem mutation. It is not a lock and does not provide cross-process, cross-worktree, or distributed serialization.
+
+## Local File Boundary
+
+```text
+resolve exact Markdown snapshot
+  -> validate state, version, and Spec policy
+  -> write a uniquely named prepared file
+  -> move the source to a uniquely named rollback file
+  -> promote the prepared file into the target directory
+  -> remove the rollback file
+```
+
+The command never overwrites an existing target. If promotion fails during the command, it restores the source when immediately possible and removes the prepared file. A failure after the target becomes visible may leave a clearly named rollback artifact for manual inspection. There is no persistent transaction log or automatic crash recovery; use the working tree and Git history as the final recovery mechanism.
+
+A legacy active Spec without `Workflow Version` is read as version `0` and upgraded on its next successful transition. Existing completed Specs are not migrated. Actor metadata is declarative local identity for audit context; it is not authenticated identity.
 
 ## RIPER Gates
 
